@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Iconscout CSS -->
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css" />
+    <link rel="stylesheet" href="/style.css">
+    <title>Login Form</title>
+</head>
+<body>
+<div class="container">
+    <div class="forms">
+        <div class="form login">
+            <span class="title">Login</span>
+            <form action="/login" method="post">
+                <div class="input-field">
+                    <input type="text" placeholder="Enter your name" required />
+                    <i class="uil uil-user"></i>
+                </div>
+                <div class="input-field">
+                    <input type="password" name="password" class="password" placeholder="Enter your password" required />
+                    <i class="uil uil-lock icon"></i>
+                    <i class="uil uil-eye-slash showHidePw"></i>
+                </div>
+                <div class="input-field button">
+                    <input type="submit" value="Login" />
+                </div>
+            </form>
+            <div class="login-signup">
+                <span class="text">
+                    Not a member?
+                    <a href="signup" class="text signup-link">Signup Now</a>
+                </span>
+            </div>
+            <div class="guest-signup">
+                <span class="text">
+                    <a href="index" class="text">Continue without account</a>
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/script.js"></script>
+</body>
+</html>
