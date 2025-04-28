@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.security.Principal;
 
-@RestController
-@RequestMapping("/secured")
+@Controller
+@RequestMapping("/")
 public class MainController {
     @GetMapping("/user")
     public String userAccess(Principal principal){
@@ -18,9 +18,20 @@ public class MainController {
         }
         return principal.getName();
     }
-   /* @GetMapping("/")
+
+    /*@GetMapping("/")
+    public String home(HttpServletRequest request) {
+        // Перевіряємо наявність валідного JWT
+        String token = extractToken(request);
+        if (token != null && jwtCore.validateToken(token)) {
+            return "index";
+        }
+        return "redirect:/signin";
+    }*/
+
+   @GetMapping("/")
     public String showLoginPage() {
-        return "signin";
+        return "index";
     }
 
     @GetMapping("/signin")
@@ -36,5 +47,5 @@ public class MainController {
     @GetMapping("/index")
     public String index() {
         return "index"; // index.html (твоя головна сторінка)
-    }*/
+    }
 }

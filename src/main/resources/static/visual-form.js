@@ -1,5 +1,5 @@
 const pwShowHide = document.querySelectorAll(".showHidePw"),
-    loginPwFields = document.querySelectorAll(".password");
+    loginPwFields = document.querySelectorAll("#password");
 
 pwShowHide.forEach((eyeIcon) => {
     eyeIcon.addEventListener("click", () => {
