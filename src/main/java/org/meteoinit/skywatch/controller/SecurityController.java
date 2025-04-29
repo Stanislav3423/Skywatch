@@ -120,9 +120,11 @@ public class SecurityController {
 
     @GetMapping("/role")
     public ResponseEntity<String> getUserRole(Authentication authentication) {
-        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        if (authentication == null || !(authentication.getPrincipal() instanceof UserDetailsImpl userDetails)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized");
+        }
+
         String role = userDetails.getRole();
-        System.out.println(role);
         return ResponseEntity.ok(role);
     }
 
