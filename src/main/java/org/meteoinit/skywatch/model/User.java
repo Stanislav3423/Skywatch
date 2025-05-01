@@ -3,6 +3,9 @@ package org.meteoinit.skywatch.model;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "Users")
 @Data
@@ -19,8 +22,11 @@ public class User {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "role_id", nullable = false)
-    private Role role; // Тут вже об'єкт Role
+    private Role role;
 
     @Column(nullable = false)
     private Boolean enabled = true;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserLocation> userLocations = new ArrayList<>();
 }

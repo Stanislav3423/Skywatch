@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skywatch</title>
+    <link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet" href="/setting-styles.css">
+    <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+<div class="container">
+    <aside class="sidebar">
+        <div class="logo-section">
+            <div class="logo-wrapper">
+                <i data-lucide="cloud" class="logo-icon"></i>
+                <span class="logo-text">Skywatch</span>
+            </div>
+            <button class="toggle-btn visible-expanded">
+                <i data-lucide="chevron-left"></i>
+            </button>
+        </div>
+
+        <div class="user-section">
+            <div class="user-info">
+                <div class="user-avatar"></div>
+                <span class="user-name"></span>
+            </div>
+            <button class="logout-btn visible-expanded">
+                <i data-lucide="log-out"></i>
+            </button>
+        </div>
+
+        <nav class="nav-menu">
+            <a href="/index" class="nav-item">
+                <i data-lucide="home"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="" class="nav-item">
+                <i data-lucide="chart-column-increasing"></i>
+                <span>Analytics</span>
+            </a>
+            <a href="" class="nav-item">
+                <i data-lucide="cloud-alert"></i>
+                <span>Alerts</span>
+            </a>
+            <a href="" class="nav-item">
+                <i data-lucide="notebook-pen"></i>
+                <span>Cases</span>
+            </a>
+            <a href="" class="nav-item">
+                <i data-lucide="clipboard-plus"></i>
+                <span>Reports</span>
+            </a>
+            <a href="" class="nav-item">
+                <i data-lucide="map"></i>
+                <span>Radar</span>
+            </a>
+            <a href="/settings" class="nav-item active">
+                <i data-lucide="settings"></i>
+                <span>Settings</span>
+            </a>
+        </nav>
+
+        <div class="bottom-logout">
+            <button class="logout-btn">
+                <i data-lucide="log-out"></i>
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <header class="header">
+            <h1>Settings</h1>
+            <p class="location">Kyiv, Ukraine</p>
+        </header>
+
+        <!-- Settings Content -->
+        <div class="settings-container">
+            <!-- Tabs -->
+            <div class="settings-tabs">
+                <button class="tab-item active">Locations</button>
+                <button class="tab-item">Triggers</button>
+                <button class="tab-item">Account</button>
+            </div>
+
+            <!-- Settings Table -->
+            <div class="settings-table">
+                <div class="table-header">
+                    <h2>Saved Locations</h2>
+                    <button class="add-btn">
+                        <i data-lucide="plus"></i>
+                        Add Location
+                    </button>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Location</th>
+                            <th>Latitude</th>
+                            <th>Longitude</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script>
+    lucide.createIcons();
+
+    const sidebar = document.querySelector('.sidebar');
+    const mainContent = document.querySelector('.main-content');
+    const logoWrapper = document.querySelector('.logo-wrapper');
+    const toggleBtn = document.querySelector('.toggle-btn');
+
+    function toggleSidebar() {
+        sidebar.classList.toggle('collapsed');
+        mainContent.classList.toggle('expanded');
+    }
+
+    logoWrapper.addEventListener('click', () => {
+        if (sidebar.classList.contains('collapsed')) {
+            toggleSidebar();
+        }
+    });
+
+    toggleBtn.addEventListener('click', toggleSidebar);
+</script>
+<script src="/sidebar.js"></script>
+<script src="/location-settings-table.js"></script>
+</body>
+</html>

@@ -22,7 +22,6 @@ public class JwtCore {
     }
 
     public String getNameFromJwt(String token) {
-        System.out.println("Message");
         return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody().getSubject();
     }
 }

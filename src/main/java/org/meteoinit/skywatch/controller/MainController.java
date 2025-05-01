@@ -48,4 +48,9 @@ public class MainController {
     public String index() {
         return "index"; // index.html (твоя головна сторінка)
     }
+
+    @GetMapping("/settings")
+    public String settings() {
+        return "settings"; // index.html (твоя головна сторінка)
+    }
 }

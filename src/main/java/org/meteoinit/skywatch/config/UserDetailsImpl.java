@@ -1,5 +1,6 @@
 package org.meteoinit.skywatch.config;
 
+import lombok.Data;
 import org.meteoinit.skywatch.model.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
