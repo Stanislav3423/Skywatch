@@ -17,7 +17,8 @@ public class Location {
     private String name;
     private Double lon;
     private Double lat;
-    private Long id_json;
+    @Column(name="id_json")
+    private Long idJson;
     private String state;
 
     @ManyToOne

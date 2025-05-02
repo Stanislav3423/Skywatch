@@ -39,14 +39,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
             // --- Запускаємо отримання погоди одразу ---
             const initialSelectedOption = select.options[select.selectedIndex];
-            const initialLocationId = initialSelectedOption.dataset.locationId; // ✅ виправлено
+            const initialLocationId = initialSelectedOption.dataset.locationId;
             fetchWeatherAndUpdate(initialLocationId);
 
             // --- Оновлення при виборі ---
             select.addEventListener('change', () => {
                 locationDisplay.textContent = select.value;
                 const selectedOption = select.options[select.selectedIndex];
-                const locationId = selectedOption.dataset.locationId; // ✅ виправлено (було dataset.json)
+                const locationId = selectedOption.dataset.locationId;
                 fetchWeatherAndUpdate(locationId);
             });
         });

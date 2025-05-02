@@ -26,7 +26,7 @@ public class UserLocationService {
     public List<LocationDto> getUserLocations(Long userId) {
         return userLocationRepository.findUserLocationsByUserId(userId)
                 .stream()
-                .map(loc -> new LocationDto(loc.getId(), loc.getName(), loc.getLon(), loc.getLat(), loc.getCountry().getCode(), loc.getId_json()))
+                .map(loc -> new LocationDto(loc.getId(), loc.getName(), loc.getLon(), loc.getLat(), loc.getCountry().getCode(), loc.getIdJson()))
                 .collect(Collectors.toList());
     }
 

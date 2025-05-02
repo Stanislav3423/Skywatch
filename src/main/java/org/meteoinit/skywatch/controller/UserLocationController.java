@@ -42,7 +42,7 @@ public class UserLocationController {
                         location.getLon(),
                         location.getLat(),
                         location.getCountry().getCode(),
-                        location.getId_json()
+                        location.getIdJson()
                         ))
                 .collect(Collectors.toList());
 
