@@ -1,6 +1,7 @@
 package org.meteoinit.skywatch.service;
 
 
+import org.meteoinit.skywatch.dto.ForecastDto;
 import org.meteoinit.skywatch.model.*;
 import org.meteoinit.skywatch.repository.*;
 
@@ -13,6 +14,8 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -103,7 +106,7 @@ public class ForecastService {
             if (node.has("rain") && node.get("rain").has("1h"))
                 forecast.setPrecipitationAmount(node.get("rain").get("1h").asDouble());
             if (node.has("pop"))
-                forecast.setPrecipitationProbability(node.get("pop").asDouble());
+                forecast.setPrecipitationProbability(node.get("pop").asDouble()*100);
 
             hourlyRepo.save(forecast);
         }
@@ -165,9 +168,49 @@ public class ForecastService {
             if (node.has("rain"))
                 forecast.setPrecipitationAmount(node.get("rain").asDouble());
             if (node.has("pop"))
-                forecast.setPrecipitationProbability(node.get("pop").asDouble());
+                forecast.setPrecipitationProbability(node.get("pop").asDouble()*100);
 
             dailyRepo.save(forecast);
         }
+    }
+
+    public List<ForecastDto> get7DayForecast(Long locationId) {
+        List<DailyForecast> forecasts = dailyRepo.findDailyForecastsByLocation_IdJson(locationId);
+        return forecasts.stream().map(this::mapDailyForecastToDto).collect(Collectors.toList());
+    }
+
+    public List<ForecastDto> get12HourForecast(Long locationId) {
+        List<HourlyForecast> forecasts = hourlyRepo.findHourlyForecastsByLocation_IdJson(locationId);
+        return forecasts.stream().map(this::mapHourlyForecastToDto).collect(Collectors.toList());
+    }
+
+    private ForecastDto mapDailyForecastToDto(DailyForecast forecast) {
+        ForecastDto dto = new ForecastDto();
+        dto.setDayOrHour(forecast.getDate().getWeekday());
+        dto.setDate(forecast.getDate().getGmt().toLocalDate().toString());
+        dto.setIcon(forecast.getCondition().getIcon());
+        dto.setTemperature((float) forecast.getTemp());
+        dto.setPressure(forecast.getPressure());
+        dto.setWind_dir(forecast.getWind().getDeg());
+        dto.setWind_speed(forecast.getWind().getSpeed().floatValue());
+        dto.setPrecipitation_amount(forecast.getPrecipitationAmount() != null ? forecast.getPrecipitationAmount().floatValue() : 0);
+        dto.setPrecipitation_probability(forecast.getPrecipitationProbability() != null ? forecast.getPrecipitationProbability().floatValue() : 0);
+        dto.setCondition(forecast.getCondition().getMain());
+        return dto;
+    }
+
+    private ForecastDto mapHourlyForecastToDto(HourlyForecast forecast) {
+        ForecastDto dto = new ForecastDto();
+        dto.setDayOrHour(String.format("%02d:00", forecast.getDate().getHour()));
+        dto.setDate(forecast.getDate().getGmt().toLocalDate().toString());
+        dto.setIcon(forecast.getCondition().getIcon());
+        dto.setTemperature((float) forecast.getTemp());
+        dto.setPressure(forecast.getPressure());
+        dto.setWind_dir(forecast.getWind().getDeg());
+        dto.setWind_speed(forecast.getWind().getSpeed().floatValue());
+        dto.setPrecipitation_amount(forecast.getPrecipitationAmount() != null ? forecast.getPrecipitationAmount().floatValue() : 0);
+        dto.setPrecipitation_probability(forecast.getPrecipitationProbability() != null ? forecast.getPrecipitationProbability().floatValue() : 0);
+        dto.setCondition(forecast.getCondition().getMain());
+        return dto;
     }
 }

@@ -74,7 +74,6 @@
     <main class="main-content">
         <header class="header">
             <h1>Settings</h1>
-            <p class="location">Kyiv, Ukraine</p>
         </header>
 
         <!-- Settings Content -->
@@ -90,7 +89,7 @@
             <div class="settings-table">
                 <div class="table-header">
                     <h2>Saved Locations</h2>
-                    <button class="add-btn">
+                    <button class="add-btn" id="openLocationModalBtn">
                         <i data-lucide="plus"></i>
                         Add Location
                     </button>
@@ -112,7 +111,20 @@
         </div>
     </main>
 </div>
-
+<!-- Модальне вікно -->
+<div id="locationModal" class="modal">
+    <div class="modal-content">
+        <span id="closeLocationModalBtn" class="close-modal">&times;</span>
+        <div class="modal-header">
+            <h3 class="modal-title">Search Location</h3>
+            <input type="text" id="locationSearchInput" placeholder="Enter location name..." class="modal-input">
+            <button id="searchLocationBtn" class="modal-search-btn">Search</button>
+        </div>
+        <div class="modal-body" id="locationResults">
+            <!-- dynamically filled with search results -->
+        </div>
+    </div>
+</div>
 <script>
     lucide.createIcons();
 

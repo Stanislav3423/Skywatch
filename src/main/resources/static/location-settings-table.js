@@ -27,7 +27,7 @@ function loadUserLocations(username) {
         .catch(error => console.error('Error loading locations:', error));
 }
 
-function openLocationSearch() {
+/*function openLocationSearch() {
     const query = prompt("Enter location name to search:");
     if (!query) return;
 
@@ -52,7 +52,72 @@ function openLocationSearch() {
             }
         })
         .catch(err => console.error('Search error:', err));
-}
+}*/
+
+// Отримуємо елементи
+const openLocationModalBtn = document.getElementById('openLocationModalBtn');
+const locationModal = document.getElementById('locationModal');
+const closeLocationModalBtn = document.getElementById('closeLocationModalBtn');
+const searchLocationBtn = document.getElementById('searchLocationBtn');
+const locationSearchInput = document.getElementById('locationSearchInput');
+const locationResults = document.getElementById('locationResults');
+
+// Відкриття модального вікна
+openLocationModalBtn.addEventListener('click', () => {
+    locationModal.classList.add('active');
+});
+
+// Закриття модального вікна
+closeLocationModalBtn.addEventListener('click', () => {
+    locationModal.classList.remove('active');
+});
+
+// Закриття модального при кліку за межами контенту
+window.addEventListener('click', (event) => {
+    if (event.target === locationModal) {
+        locationModal.classList.remove('active');
+    }
+});
+
+// Пошук локації
+searchLocationBtn.addEventListener('click', () => {
+    const query = locationSearchInput.value.trim();
+    if (!query) return;
+
+    // Очистити попередні результати
+    locationResults.innerHTML = "<p>Searching...</p>";
+
+    fetch(`/locations/search?query=${encodeURIComponent(query)}`)
+        .then(res => res.json())
+        .then(locations => {
+            if (!locations.length) {
+                locationResults.innerHTML = "<p>No locations found</p>";
+                return;
+            }
+
+            // Створити кнопки для результатів
+            locationResults.innerHTML = locations.map((l, i) =>
+                `<div class="location-item" data-id="${l.id}">
+                    <span class="name">${l.name}</span>
+                    <span class="country">(${l.countryCode})</span>
+                    <button class="add-location-btn">Add</button>
+                </div>`
+            ).join('');
+        })
+        .catch(err => {
+            console.error('Search error:', err);
+            locationResults.innerHTML = "<p>Error loading locations</p>";
+        });
+});
+
+// Обробник кліку на кнопках "Add" всередині результатів
+locationResults.addEventListener('click', (event) => {
+    if (event.target.classList.contains('add-location-btn')) {
+        const locationItem = event.target.closest('.location-item');
+        const locationId = locationItem.getAttribute('data-id');
+        addLocationToUser(locationId);
+    }
+});
 
 function addLocationToUser(locationId) {
     const username = loadUsernameFromTokenTable();
@@ -105,7 +170,7 @@ function loadUsernameFromTokenTable() {
     }
 }
 
-document.querySelector('.add-btn').addEventListener('click', openLocationSearch);
+//document.querySelector('.add-btn').addEventListener('click', openLocationSearch);
 
 const username = loadUsernameFromTokenTable();
 if (username) {

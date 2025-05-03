@@ -6,6 +6,7 @@ import org.meteoinit.skywatch.model.User;
 import org.meteoinit.skywatch.repository.UserRepository;
 import org.meteoinit.skywatch.service.UserLocationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
@@ -52,8 +53,14 @@ public class UserLocationController {
     @PostMapping("/add-to-user")
     public ResponseEntity<?> addLocationToUser(@RequestParam("locationId") Long locationId,
                                                @RequestParam("username") String username) {
-        locationService.addLocationToUser(locationId, username);
-        return ResponseEntity.ok().build();
+        /*locationService.addLocationToUser(locationId, username);
+        return ResponseEntity.ok().build();*/
+        try {
+            locationService.addLocationToUser(locationId, username);
+            return ResponseEntity.status(HttpStatus.CREATED).build();
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 
     @DeleteMapping("/delete-from-user")

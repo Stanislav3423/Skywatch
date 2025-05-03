@@ -18,4 +18,8 @@ public interface UserLocationRepository extends JpaRepository<UserLocation, Long
     List<Location> findUserLocationsByUserId(@Param("userId") Long userId);
 
     Optional<UserLocation> findByUserAndLocation(User user, Location location);
+
+    List<UserLocation> findByUser(User user);
+
+    void deleteByUser(User user);
 }

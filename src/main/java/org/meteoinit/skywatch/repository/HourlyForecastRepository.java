@@ -5,6 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface HourlyForecastRepository extends JpaRepository<HourlyForecast, Long> {
-    List<HourlyForecast> findByLocationId(Long locationId);
+    List<HourlyForecast> findHourlyForecastsByLocation_IdJson(Long idJson);
     void deleteByLocationId(Long locationId);
 }

@@ -1,4 +1,5 @@
 let currentWeatherData = null;
+let currentLocationId = null;
 
 document.addEventListener("DOMContentLoaded", () => {
     const username = loadUsernameFromTokenTable();
@@ -25,6 +26,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 if (selectedLocationParam && locValue === selectedLocationParam) {
                     option.selected = true;
+                    currentLocationId = loc.id_json; // <-- ОНОВЛЕННЯ ЗМІННОЇ
                 }
 
                 select.appendChild(option);
@@ -33,21 +35,22 @@ document.addEventListener("DOMContentLoaded", () => {
             // Якщо не передано параметр → вибираємо першу
             if (!selectedLocationParam) {
                 select.selectedIndex = 0;
+                const initialSelectedOption = select.options[0];
+                currentLocationId = initialSelectedOption.dataset.locationId;
             }
 
             locationDisplay.textContent = select.value;
 
-            // --- Запускаємо отримання погоди одразу ---
-            const initialSelectedOption = select.options[select.selectedIndex];
-            const initialLocationId = initialSelectedOption.dataset.locationId;
-            fetchWeatherAndUpdate(initialLocationId);
+            // Після ініціалізації — завантаження погоди та прогнозу
+            fetchWeatherAndUpdate(currentLocationId);
+            loadForecast('7day', currentLocationId); // <-- ДОДАЄМО
 
             // --- Оновлення при виборі ---
             select.addEventListener('change', () => {
                 locationDisplay.textContent = select.value;
                 const selectedOption = select.options[select.selectedIndex];
                 const locationId = selectedOption.dataset.locationId;
-                fetchWeatherAndUpdate(locationId);
+                changeLocation(select.value);
             });
         });
 });
@@ -168,3 +171,211 @@ function loadUsernameFromTokenTable() {
 function changeLocation(selectedValue) {
     window.location.href = `index?location=${encodeURIComponent(selectedValue)}`;
 }
+
+const btn7day = document.getElementById('btn-7day');
+const btn12hour = document.getElementById('btn-12hour');
+const forecastContainer = document.getElementById('forecast-container');
+
+
+async function loadForecast(type, locationId) {
+    let url = `/dashboard/forecast/${type}/${locationId}`;
+    const response = await fetch(url);
+    const data = await response.json();
+
+    let title = type === '7day' ? '7-Day Forecast' : '12-Hour Forecast';
+
+    let html = `
+            <section class="forecast">
+                <h2>${title}</h2>
+                <div class="forecast-grid">
+        `;
+
+    data.forEach(item => {
+        html += `
+        <div class="forecast-item" 
+            data-day="${item.dayOrHour}"
+            data-date="${item.date}"
+            data-icon="${item.icon}"
+            data-temperature="${item.temperature}"
+            data-pressure="${item.pressure}"
+            data-wind-dir="${item.wind_dir}"
+            data-wind-speed="${item.wind_speed}"
+            data-precipitation-amount="${item.precipitation_amount}"
+            data-precipitation-probability="${item.precipitation_probability}"
+            data-condition="${item.condition}">
+            
+            <div class="day-info">
+                <p class="day">${item.dayOrHour}</p>
+                <p class="date">${item.date}</p>
+            </div>
+            <img src="https://openweathermap.org/img/wn/${item.icon}@2x.png" alt="${item.condition}" class="forecast-icon" />
+            <div class="forecast-temp">
+                <p class="temp">${item.temperature}°</p>
+                <p class="condition">${item.condition}</p>
+            </div>
+        </div>
+    `;
+    });
+
+    html += `</div></section>`;
+
+    forecastContainer.innerHTML = html;
+    lucide.createIcons();
+
+    // Очистимо існуючі графіки
+    if (window.tempChart instanceof Chart) window.tempChart.destroy();
+    if (window.windChart instanceof Chart) window.windChart.destroy();
+    if (window.precipChart instanceof Chart) window.precipChart.destroy();
+
+// Масиви даних для графіків
+    const labels = data.map(item => item.dayOrHour);
+    const temperatures = data.map(item => parseFloat(item.temperature));
+    const windSpeeds = data.map(item => parseFloat(item.wind_speed));
+    const precipitations = data.map(item => parseFloat(item.precipitation_amount));
+
+// Температурний графік
+    const tempCtx = document.getElementById('temperatureChart').getContext('2d');
+    window.tempChart = new Chart(tempCtx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Temperature (°C)',
+                data: temperatures,
+                borderColor: '#007bff',
+                backgroundColor: 'rgba(0, 123, 255, 0.1)',
+                fill: true,
+                tension: 0.3
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                x: { title: { display: true, text: type === '7day' ? 'Day' : 'Hour' } },
+                y: { title: { display: true, text: '°C' } }
+            }
+        }
+    });
+
+// Графік швидкості вітру
+    const windCtx = document.getElementById('windChart').getContext('2d');
+    window.windChart = new Chart(windCtx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Wind Speed (m/s)',
+                data: windSpeeds,
+                borderColor: '#28a745',
+                backgroundColor: 'rgba(40, 167, 69, 0.1)',
+                fill: true,
+                tension: 0.3
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                x: { title: { display: true, text: type === '7day' ? 'Day' : 'Hour' } },
+                y: { title: { display: true, text: 'm/s' } }
+            }
+        }
+    });
+
+// Графік опадів
+    const precipCtx = document.getElementById('precipitationChart').getContext('2d');
+    window.precipChart = new Chart(precipCtx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Precipitation (mm)',
+                data: precipitations,
+                backgroundColor: '#ffc107'
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                x: { title: { display: true, text: type === '7day' ? 'Day' : 'Hour' } },
+                y: { title: { display: true, text: 'mm' } }
+            }
+        }
+    });
+
+    forecastContainer.querySelectorAll('.forecast-item').forEach(itemEl => {
+        itemEl.addEventListener('click', () => {
+            const day = itemEl.dataset.day;
+            const date = itemEl.dataset.date;
+            const icon = itemEl.dataset.icon;
+            const temperature = itemEl.dataset.temperature;
+            const pressure = itemEl.dataset.pressure;
+            const windDir = itemEl.dataset['windDir'];
+            const windSpeed = itemEl.dataset['windSpeed'];
+            const precipAmount = itemEl.dataset['precipitationAmount'];
+            const precipProb = itemEl.dataset['precipitationProbability'];
+            const condition = itemEl.dataset.condition;
+
+            // Заповнюємо модальне вікно
+            document.getElementById('modalTitle').textContent = `${day} (${date})`;
+            document.getElementById('modalIcon').src = `https://openweathermap.org/img/wn/${icon}@2x.png`;
+            document.getElementById('modalIcon').alt = condition;
+            document.getElementById('modalTemp').textContent = temperature;
+            document.getElementById('modalCondition').textContent = condition;
+            document.getElementById('modalPressure').textContent = pressure;
+            document.getElementById('modalWindDir').textContent = windDir;
+            document.getElementById('modalWindSpeed').textContent = windSpeed;
+            document.getElementById('modalPrecipAmount').textContent = precipAmount;
+            document.getElementById('modalPrecipProb').textContent = precipProb;
+
+            // Показати модальне вікно (оновлений спосіб)
+            const modal = document.getElementById('forecastModal');
+            modal.classList.add('active');
+            modal.style.display = 'flex'; // Додаємо для негайного відображення
+        });
+    });
+
+}
+
+btn7day.addEventListener('click', () => {
+    btn7day.classList.add('active');
+    btn12hour.classList.remove('active');
+    if (currentLocationId) {
+        loadForecast('7day', currentLocationId);
+    }
+});
+
+btn12hour.addEventListener('click', () => {
+    btn12hour.classList.add('active');
+    btn7day.classList.remove('active');
+    if (currentLocationId) {
+        loadForecast('12hour', currentLocationId);
+    }
+});
+/*
+document.getElementById('closeModal').addEventListener('click', () => {
+    document.getElementById('forecastModal').style.display = 'none';
+});
+
+window.addEventListener('click', (event) => {
+    if (event.target === document.getElementById('forecastModal')) {
+        document.getElementById('forecastModal').style.display = 'none';
+    }
+});*/
+// Оновлена логіка закриття
+document.getElementById('closeModal').addEventListener('click', () => {
+    const modal = document.getElementById('forecastModal');
+    modal.classList.remove('active');
+    setTimeout(() => {
+        modal.style.display = 'none';
+    }, 300);
+});
+
+window.addEventListener('click', (event) => {
+    if (event.target === document.getElementById('forecastModal')) {
+        const modal = document.getElementById('forecastModal');
+        modal.classList.remove('active');
+        setTimeout(() => {
+            modal.style.display = 'none';
+        }, 300);
+    }
+});

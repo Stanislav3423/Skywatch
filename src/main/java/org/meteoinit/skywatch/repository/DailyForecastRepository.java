@@ -5,6 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface DailyForecastRepository extends JpaRepository<DailyForecast, Long> {
-    List<DailyForecast> findByLocationId(Long locationId);
+    List<DailyForecast> findDailyForecastsByLocation_IdJson(Long idJson);
     void deleteByLocationId(Long locationId);
 }

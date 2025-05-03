@@ -40,6 +40,14 @@ public class UserLocationService {
         Location location = locationRepository.findById(locationId)
                 .orElseThrow(() -> new RuntimeException("Location not found"));
 
+        // Перевірка, чи не додано вже цю локацію
+        boolean isLocationAlreadyAdded = user.getUserLocations().stream()
+                .anyMatch(userLocation -> userLocation.getLocation().getId().equals(locationId));
+
+        if (isLocationAlreadyAdded) {
+            throw new RuntimeException("Location is already added to this user");
+        }
+
         UserLocation userLocation = new UserLocation();
         userLocation.setUser(user);
         userLocation.setLocation(location);
@@ -51,12 +59,29 @@ public class UserLocationService {
     public void deleteLocationFromUser(Long locationId, String username) {
         User user = userRepository.findUserByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
+
         Location location = locationRepository.findById(locationId)
                 .orElseThrow(() -> new RuntimeException("Location not found"));
 
-        UserLocation userLocation = userLocationRepository.findByUserAndLocation(user, location)
-                .orElseThrow(() -> new RuntimeException("UserLocation not found"));
+        List<UserLocation> userLocations = userLocationRepository.findByUser(user);
 
-        userLocationRepository.delete(userLocation);
+        List<UserLocation> matchingLocations = userLocations.stream()
+                .filter(ul -> ul.getLocation().getId().equals(locationId))
+                .collect(Collectors.toList());
+
+        if (!matchingLocations.isEmpty()) {
+            UserLocation lastLocation = matchingLocations.get(matchingLocations.size() - 1);
+            userLocationRepository.delete(lastLocation);
+        } else {
+            throw new RuntimeException("Location not found in user's locations");
+        }
+    }
+
+    public boolean isLocationAlreadyAdded(Long locationId, String username) {
+        User user = userRepository.findUserByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Користувача не знайдено"));
+
+        return user.getUserLocations().stream()
+                .anyMatch(location -> location.getId().equals(locationId));
     }
 }

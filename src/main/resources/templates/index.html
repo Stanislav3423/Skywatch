@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Skywatch</title>
     <link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet" href="/dashboard.css">
     <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
@@ -156,69 +157,73 @@
             </div>
         </section>
 
-        <section class="forecast">
-            <h2>5-Day Forecast</h2>
-            <div class="forecast-grid">
-                <div class="forecast-item">
-                    <div class="day-info">
-                        <p class="day">Mon</p>
-                        <p class="date">May 10</p>
-                    </div>
-                    <i data-lucide="sun" class="forecast-icon"></i>
-                    <div class="forecast-temp">
-                        <p class="temp">24°</p>
-                        <p class="condition">Sunny</p>
-                    </div>
-                </div>
-                <div class="forecast-item">
-                    <div class="day-info">
-                        <p class="day">Tue</p>
-                        <p class="date">May 11</p>
-                    </div>
-                    <i data-lucide="cloud" class="forecast-icon"></i>
-                    <div class="forecast-temp">
-                        <p class="temp">22°</p>
-                        <p class="condition">Cloudy</p>
-                    </div>
-                </div>
-                <div class="forecast-item">
-                    <div class="day-info">
-                        <p class="day">Wed</p>
-                        <p class="date">May 12</p>
-                    </div>
-                    <i data-lucide="cloud-rain" class="forecast-icon"></i>
-                    <div class="forecast-temp">
-                        <p class="temp">19°</p>
-                        <p class="condition">Rain</p>
-                    </div>
-                </div>
-                <div class="forecast-item">
-                    <div class="day-info">
-                        <p class="day">Thu</p>
-                        <p class="date">May 13</p>
-                    </div>
-                    <i data-lucide="cloud-lightning" class="forecast-icon"></i>
-                    <div class="forecast-temp">
-                        <p class="temp">17°</p>
-                        <p class="condition">Storms</p>
-                    </div>
-                </div>
-                <div class="forecast-item">
-                    <div class="day-info">
-                        <p class="day">Fri</p>
-                        <p class="date">May 14</p>
-                    </div>
-                    <i data-lucide="cloud-drizzle" class="forecast-icon"></i>
-                    <div class="forecast-temp">
-                        <p class="temp">20°</p>
-                        <p class="condition">Drizzle</p>
-                    </div>
-                </div>
+        <div class="settings-tabs">
+            <button class="tab-item active" id="btn-7day">7-Day Forecast</button>
+            <button class="tab-item" id="btn-12hour">12-Hour Forecast</button>
+        </div>
+
+        <div id="forecast-container">
+            <section class="forecast">
+            </section>
+        </div>
+
+        <div id="charts-container" class="charts-container">
+            <div class="chart-card">
+                <h3>Temperature Chart</h3>
+                <canvas id="temperatureChart"></canvas>
             </div>
-        </section>
+            <div class="chart-card">
+                <h3>Wind Speed Chart</h3>
+                <canvas id="windChart"></canvas>
+            </div>
+            <div class="chart-card">
+                <h3>Precipitation Chart</h3>
+                <canvas id="precipitationChart"></canvas>
+            </div>
+        </div>
     </main>
 </div>
 
+<div id="forecastModal" class="modal">
+    <div class="modal-content">
+        <span id="closeModal" class="close-modal">&times;</span>
+        <div class="modal-header">
+            <h3 class="modal-title" id="modalTitle"></h3>
+            <div class="modal-date" id="modalDate"></div>
+            <img class="modal-icon" id="modalIcon" src="" alt="Weather Icon">
+        </div>
+        <div class="modal-body">
+            <div class="data-row">
+                <span class="data-label">Temperature</span>
+                <span class="data-value"><span id="modalTemp"></span><span class="data-unit">°C</span></span>
+            </div>
+            <div class="data-row">
+                <span class="data-label">Condition</span>
+                <span class="data-value" id="modalCondition"></span>
+            </div>
+            <div class="data-row">
+                <span class="data-label">Pressure</span>
+                <span class="data-value"><span id="modalPressure"></span><span class="data-unit">hPa</span></span>
+            </div>
+            <div class="data-row">
+                <span class="data-label">Wind Direction</span>
+                <span class="data-value"><span id="modalWindDir"></span><span class="data-unit">°</span></span>
+            </div>
+            <div class="data-row">
+                <span class="data-label">Wind Speed</span>
+                <span class="data-value"><span id="modalWindSpeed"></span><span class="data-unit">m/s</span></span>
+            </div>
+            <div class="data-row">
+                <span class="data-label">Precipitation</span>
+                <span class="data-value"><span id="modalPrecipAmount"></span><span class="data-unit">mm</span></span>
+            </div>
+            <div class="data-row">
+                <span class="data-label">Precip. Probability</span>
+                <span class="data-value"><span id="modalPrecipProb"></span><span class="data-unit">%</span></span>
+            </div>
+        </div>
+    </div>
+</div>
 <script>
     lucide.createIcons();
 
@@ -240,6 +245,7 @@
 
     toggleBtn.addEventListener('click', toggleSidebar);
 </script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="/sidebar.js"></script>
 <script src="/dashboard.js"></script>
 </body>
