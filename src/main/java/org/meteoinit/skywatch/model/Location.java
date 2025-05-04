@@ -27,4 +27,7 @@ public class Location {
 
     @OneToMany(mappedBy = "location", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserLocation> userLocations = new ArrayList<>();
+
+    @OneToMany(mappedBy = "location")
+    private List<Trigger> triggers;
 }

@@ -184,12 +184,13 @@ public class ForecastService {
         return forecasts.stream().map(this::mapHourlyForecastToDto).collect(Collectors.toList());
     }
 
-    private ForecastDto mapDailyForecastToDto(DailyForecast forecast) {
+    public ForecastDto mapDailyForecastToDto(DailyForecast forecast) {
         ForecastDto dto = new ForecastDto();
         dto.setDayOrHour(forecast.getDate().getWeekday());
         dto.setDate(forecast.getDate().getGmt().toLocalDate().toString());
         dto.setIcon(forecast.getCondition().getIcon());
         dto.setTemperature((float) forecast.getTemp());
+        dto.setHumidity(forecast.getHumidity());
         dto.setPressure(forecast.getPressure());
         dto.setWind_dir(forecast.getWind().getDeg());
         dto.setWind_speed(forecast.getWind().getSpeed().floatValue());
@@ -199,13 +200,15 @@ public class ForecastService {
         return dto;
     }
 
-    private ForecastDto mapHourlyForecastToDto(HourlyForecast forecast) {
+
+    public ForecastDto mapHourlyForecastToDto(HourlyForecast forecast) {
         ForecastDto dto = new ForecastDto();
         dto.setDayOrHour(String.format("%02d:00", forecast.getDate().getHour()));
         dto.setDate(forecast.getDate().getGmt().toLocalDate().toString());
         dto.setIcon(forecast.getCondition().getIcon());
         dto.setTemperature((float) forecast.getTemp());
         dto.setPressure(forecast.getPressure());
+        dto.setHumidity(forecast.getHumidity());
         dto.setWind_dir(forecast.getWind().getDeg());
         dto.setWind_speed(forecast.getWind().getSpeed().floatValue());
         dto.setPrecipitation_amount(forecast.getPrecipitationAmount() != null ? forecast.getPrecipitationAmount().floatValue() : 0);

@@ -41,7 +41,7 @@
                 <i data-lucide="chart-column-increasing"></i>
                 <span>Analytics</span>
             </a>
-            <a href="" class="nav-item">
+            <a href="/alerts" class="nav-item">
                 <i data-lucide="cloud-alert"></i>
                 <span>Alerts</span>
             </a>
@@ -52,10 +52,6 @@
             <a href="" class="nav-item">
                 <i data-lucide="clipboard-plus"></i>
                 <span>Reports</span>
-            </a>
-            <a href="" class="nav-item">
-                <i data-lucide="map"></i>
-                <span>Radar</span>
             </a>
             <a href="/settings" class="nav-item active">
                 <i data-lucide="settings"></i>
@@ -80,33 +76,68 @@
         <div class="settings-container">
             <!-- Tabs -->
             <div class="settings-tabs">
-                <button class="tab-item active">Locations</button>
-                <button class="tab-item">Triggers</button>
-                <button class="tab-item">Account</button>
+                <button class="tab-item active" data-tab="locations">Locations</button>
+                <button class="tab-item" data-tab="triggers">Triggers</button>
+                <button class="tab-item" data-tab="account">Account</button>
             </div>
 
-            <!-- Settings Table -->
-            <div class="settings-table">
-                <div class="table-header">
-                    <h2>Saved Locations</h2>
-                    <button class="add-btn" id="openLocationModalBtn">
-                        <i data-lucide="plus"></i>
-                        Add Location
-                    </button>
-                </div>
-                <table>
-                    <thead>
+            <!-- Settings Tables -->
+            <div class="settings-tables">
+                <!-- Locations Table -->
+                <div class="settings-table tab-content active" id="locations">
+                    <div class="table-header">
+                        <h2>Saved Locations</h2>
+                        <button class="add-btn" id="openLocationModalBtn">
+                            <i data-lucide="plus"></i>
+                            Add Location
+                        </button>
+                    </div>
+                    <table>
+                        <thead>
                         <tr>
                             <th>Location</th>
                             <th>Latitude</th>
                             <th>Longitude</th>
                             <th>Actions</th>
                         </tr>
-                    </thead>
-                    <tbody>
+                        </thead>
+                        <tbody>
+                        <!-- rows for locations -->
+                        </tbody>
+                    </table>
+                </div>
 
-                    </tbody>
-                </table>
+                <!-- Triggers Table -->
+                <div class="settings-table tab-content" id="triggers">
+                    <div class="table-header">
+                        <h2>Saved Triggers</h2>
+                        <button class="add-btn" id="openTriggerModalBtn">
+                            <i data-lucide="plus"></i>
+                            Add Trigger
+                        </button>
+                    </div>
+                    <table id="triggersTable">
+                        <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Condition</th>
+                            <th>Location</th>
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <!-- rows will be inserted here -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Account Content -->
+                <div class="settings-table tab-content" id="account">
+                    <div class="table-header">
+                        <h2>Account Settings</h2>
+                    </div>
+                    <p id="acc-details-p">Account details</p>
+                </div>
             </div>
         </div>
     </main>
@@ -123,6 +154,48 @@
         <div class="modal-body" id="locationResults">
             <!-- dynamically filled with search results -->
         </div>
+    </div>
+</div>
+
+<div id="triggerModal" class="modal">
+    <div class="modal-content">
+        <span id="closeTriggerModalBtn" class="close-modal">&times;</span>
+        <div class="modal-header">
+            <h3 class="modal-title">Create Trigger</h3>
+        </div>
+        <form id="triggerForm">
+            <label>
+                <span>Name:</span>
+                <input type="text" id="triggerName" class="modal-input" placeholder="Trigger name" required>
+            </label>
+            <label>
+                <span>Parameter:</span>
+                <select id="triggerParameter" class="modal-input" required>
+                    <option value="temperature">Temperature</option>
+                    <option value="humidity">Humidity</option>
+                    <option value="precipitation">Precipitation</option>
+                </select>
+            </label>
+            <label>
+                <span>Operator:</span>
+                <select id="triggerOperator" class="modal-input" required>
+                    <option value=">">></option>
+                    <option value="<"><</option>
+                    <option value="=">=</option>
+                </select>
+            </label>
+            <label>
+                <span>Value:</span>
+                <input type="number" id="triggerValue" class="modal-input" placeholder="Numeric value" required>
+            </label>
+            <label>
+                <span>Location:</span>
+                <select id="triggerLocation" class="modal-input" required>
+                    <!-- заповнюється динамічно -->
+                </select>
+            </label>
+            <button type="submit" class="modal-search-btn">Create Trigger</button>
+        </form>
     </div>
 </div>
 <script>

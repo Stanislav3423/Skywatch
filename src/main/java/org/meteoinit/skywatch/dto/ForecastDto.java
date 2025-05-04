@@ -9,6 +9,7 @@ public class ForecastDto {
     private String icon;
     private Float temperature;
     private Integer pressure;
+    private Integer humidity;
     private Integer wind_dir;
     private Float wind_speed;
     private Float precipitation_amount;

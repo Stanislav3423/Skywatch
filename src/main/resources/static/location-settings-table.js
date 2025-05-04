@@ -1,58 +1,48 @@
-function loadUserLocations(username) {
-    fetch(`/locations/user/${username}`)
-        .then(response => response.json())
-        .then(data => {
-            const tbody = document.querySelector(".settings-table tbody");
-            tbody.innerHTML = '';
+const username = loadUsernameFromTokenTable();
+let userLocations = [];
 
-            data.forEach(location => {
-                const tr = document.createElement("tr");
+if (username) {
+    loadUserLocations(username);
+    loadUserTriggers(username);
+    account_det = document.getElementById("acc-details-p")
+    account_det.innerHTML = `<p>Username: ${username}</p>`;
 
-                tr.innerHTML = `
-                        <td>${location.name}, ${location.countryCode}</td>
-                        <td>${location.lat}</td>
-                        <td>${location.lon}</td>
-                        <td class="actions">
-                            <button class="action-btn delete" data-id="${location.id}">
-                                <i data-lucide="trash-2"></i>
-                            </button>
-                        </td>
-                    `;
-
-                tbody.appendChild(tr);
-            });
-
-            lucide.createIcons(); // оновити іконки після вставки
-        })
-        .catch(error => console.error('Error loading locations:', error));
+} else {
+    console.warn('No username found in token');
 }
 
-/*function openLocationSearch() {
-    const query = prompt("Enter location name to search:");
-    if (!query) return;
+function loadUsernameFromTokenTable() {
+    const token = localStorage.getItem('jwt');
+    if (!token) return;
+    const payload = parseJwt(token);
+    if (payload && payload.sub) {
+        const usernameElement = document.querySelector('.user-name');
+        if (usernameElement) {
+            return payload.sub;
+        }
+    }
+}
 
-    fetch(`/locations/search?query=${encodeURIComponent(query)}`)
-        .then(res => res.json())
-        .then(locations => {
-            if (locations.length === 0) {
-                alert("No locations found");
-                return;
-            }
+const tabs = document.querySelectorAll('.tab-item');
+const tabContents = document.querySelectorAll('.tab-content');
 
-            const selected = prompt(
-                "Select location by number:\n" +
-                locations.map((l, i) => `${i+1}. ${l.name}, ${l.countryCode}`).join("\n")
-            );
+tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+        tabs.forEach(t => t.classList.remove('active'));
+        tabContents.forEach(c => c.classList.remove('active'));
 
-            const index = parseInt(selected) - 1;
-            if (index >= 0 && index < locations.length) {
-                addLocationToUser(locations[index].id);
-            } else {
-                alert("Invalid selection");
-            }
-        })
-        .catch(err => console.error('Search error:', err));
-}*/
+        tab.classList.add('active');
+        const tabId = tab.dataset.tab;
+        const content = document.getElementById(tabId);
+        if (content) {
+            content.classList.add('active');
+        } else {
+            console.error(`Element with id="${tabId}" not found!`);
+        }
+    });
+});
+
+//----------------------------------------Locations----------------------------------------
 
 // Отримуємо елементи
 const openLocationModalBtn = document.getElementById('openLocationModalBtn');
@@ -61,6 +51,36 @@ const closeLocationModalBtn = document.getElementById('closeLocationModalBtn');
 const searchLocationBtn = document.getElementById('searchLocationBtn');
 const locationSearchInput = document.getElementById('locationSearchInput');
 const locationResults = document.getElementById('locationResults');
+
+function loadUserLocations(username) {
+    fetch(`/locations/user/${username}`)
+        .then(response => response.json())
+        .then(data => {
+            userLocations = data;
+
+            const tbody = document.querySelector(".settings-table tbody");
+            tbody.innerHTML = '';
+
+            data.forEach(location => {
+                const tr = document.createElement("tr");
+
+                tr.innerHTML = `
+                    <td>${location.name}, ${location.countryCode}</td>
+                    <td>${location.lat}</td>
+                    <td>${location.lon}</td>
+                    <td class="actions">
+                        <button class="action-btn delete" data-id="${location.id}">
+                            <i data-lucide="trash-2"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            lucide.createIcons();
+        })
+        .catch(error => console.error('Error loading locations:', error));
+}
 
 // Відкриття модального вікна
 openLocationModalBtn.addEventListener('click', () => {
@@ -158,23 +178,111 @@ function deleteUserLocation(locationId) {
         .catch(err => console.error('Delete error:', err));
 }
 
-function loadUsernameFromTokenTable() {
-    const token = localStorage.getItem('jwt');
-    if (!token) return;
-    const payload = parseJwt(token);
-    if (payload && payload.sub) {
-        const usernameElement = document.querySelector('.user-name');
-        if (usernameElement) {
-            return payload.sub;
+//----------------------------------------Triggers----------------------------------------
+function loadUserTriggers(username) {
+    fetch(`/triggers/all-for-user/${username}`)
+        .then(response => response.json())
+        .then(data => {
+            const tbody = document.querySelector("#triggersTable tbody");
+            tbody.innerHTML = '';
+
+            data.forEach(trigger => {
+                const tr = document.createElement("tr");
+
+                tr.innerHTML = `
+                    <td>${trigger.name}</td>
+                    <td>${trigger.condition}</td>
+                    <td>${trigger.location}, ${trigger.countryCode}</td>
+                    <td class="actions">
+                        <button class="action-btn delete" data-id="${trigger.id}">
+                            <i data-lucide="trash-2"></i>
+                        </button>
+                    </td>
+                `;
+
+                tbody.appendChild(tr);
+            });
+
+            lucide.createIcons();
+        })
+        .catch(error => console.error('Error loading triggers:', error));
+}
+
+document.querySelector("#triggers").addEventListener("click", (e) => {
+    if (e.target.closest('.delete')) {
+        const triggerId = e.target.closest('.delete').dataset.id;
+        if (confirm("Delete this trigger?")) {
+            deleteUserTrigger(triggerId);
         }
     }
+});
+
+function deleteUserTrigger(triggerId) {
+    const username = loadUsernameFromTokenTable(); // як ти робиш у локаціях
+    fetch(`/triggers/${triggerId}?username=${encodeURIComponent(username)}`, { method: 'DELETE' })
+        .then(res => {
+            if (res.ok) {
+                alert("Trigger deleted");
+                loadUserTriggers(username); // перезавантажити список
+            } else {
+                alert("Failed to delete trigger");
+            }
+        })
+        .catch(err => console.error('Delete trigger error:', err));
 }
 
-//document.querySelector('.add-btn').addEventListener('click', openLocationSearch);
+const openTriggerModalBtn = document.getElementById('openTriggerModalBtn');
+const triggerModal = document.getElementById('triggerModal');
+const closeTriggerModalBtn = document.getElementById('closeTriggerModalBtn');
+const triggerLocationSelect = document.getElementById('triggerLocation');
 
-const username = loadUsernameFromTokenTable();
-if (username) {
-    loadUserLocations(username);
-} else {
-    console.warn('No username found in token');
-}
+openTriggerModalBtn.addEventListener('click', () => {
+    triggerLocationSelect.innerHTML = userLocations.map(loc =>
+        `<option value="${loc.id}">${loc.name}, ${loc.countryCode}</option>`
+    ).join('');
+
+    triggerModal.classList.add('active');
+});
+
+closeTriggerModalBtn.addEventListener('click', () => {
+    triggerModal.classList.remove('active');
+});
+
+window.addEventListener('click', (e) => {
+    if (e.target === triggerModal) {
+        triggerModal.classList.remove('active');
+    }
+});
+
+const triggerForm = document.getElementById('triggerForm');
+
+triggerForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+
+    const username = loadUsernameFromTokenTable();
+
+    const triggerRequest = {
+        name: document.getElementById('triggerName').value.trim(),
+        parameter: document.getElementById('triggerParameter').value,
+        operator: document.getElementById('triggerOperator').value,
+        value: parseFloat(document.getElementById('triggerValue').value),
+        locationId: parseInt(document.getElementById('triggerLocation').value),
+        username: username
+    };
+
+    fetch('/triggers/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(triggerRequest)
+    })
+        .then(res => {
+            if (res.ok) {
+                alert('Trigger created!');
+                triggerModal.classList.remove('active');
+                loadUserTriggers(username); // якщо є функція завантаження
+            } else {
+                alert('Failed to create trigger');
+            }
+        })
+        .catch(err => console.error('Create trigger error:', err));
+});

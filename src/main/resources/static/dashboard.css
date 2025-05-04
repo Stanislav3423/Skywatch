@@ -110,7 +110,7 @@
 }
 
 .date {
-    color: #b5c7e7;
+    color: #a8b4b9;
     font-size: 0.875rem;
 }
 
@@ -271,7 +271,7 @@
 }
 .forecast-icon {
     font-size: 32px;
-    background-color: #94a3b8;
+    background-color: #c2d3e5;
     border-radius: 12px;
 }
 
@@ -342,7 +342,7 @@
 .modal-icon {
     width: 70px;
     height: 70px;
-    background-color: #94a3b8;
+    background-color: #c2d3e5;
     border-radius: 12px;
     margin: 0 auto 10px;
     display: block;

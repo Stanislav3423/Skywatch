@@ -400,3 +400,22 @@ Modal*/
 .add-location-btn:hover {
     background-color: #0056b3;
 }
+
+/*Table*/
+
+.tab-content {
+    display: none;
+}
+.tab-content.active {
+    display: block;
+}
+
+#triggerForm label {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 8px;
+}
+
+#triggerForm span {
+    margin-bottom: 6px;
+}

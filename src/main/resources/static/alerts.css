@@ -1,0 +1,94 @@
+/* --- Основні стилі з forecast dashboard --- */
+
+.forecast {
+    background-color: white;
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.forecast h2 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.forecast-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+}
+
+.forecast-item {
+    background: #f9fafb; /* світліший фон для item */
+    padding: 1rem;
+    border-radius: 0.5rem;
+    text-align: center;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e2e8f0;
+}
+
+.date {
+    font-size: 0.9rem;
+    color: #64748b;
+    margin-bottom: 1rem;
+}
+
+.forecast-temp .label,
+.detail-item .label {
+    font-size: 0.85rem;
+    color: #94a3b8;
+    margin-bottom: 0.25rem;
+}
+
+.forecast-temp .temp,
+.detail-item .value {
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.temp.highlight,
+.value.highlight {
+    color: #dc2626; /* червоний для виділення тригером */
+}
+
+/* Стиль для секції з тригером */
+.trigger-location {
+    color: #64748b;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+}
+
+/* Стиль для секції з тригером */
+.trigger-condition {
+    color: #64748b;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+}
+
+/* Tabs */
+.settings-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+.tab-item {
+    padding: 10px 20px;
+    border: none;
+    background: #eee;
+    cursor: pointer;
+    border-radius: 8px;
+}
+.tab-item.active {
+    background: #007bff;
+    color: white;
+}
+
+.forecast-icon {
+    width: 50px;
+    height: 50px;
+    font-size: 20px;
+    background-color: #c2d3e5;
+    border-radius: 12px;
+}

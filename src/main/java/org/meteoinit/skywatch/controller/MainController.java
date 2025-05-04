@@ -51,6 +51,11 @@ public class MainController {
 
     @GetMapping("/settings")
     public String settings() {
-        return "settings"; // index.html (твоя головна сторінка)
+        return "settings";
+    }
+
+    @GetMapping("/alerts")
+    public String alerts() {
+        return "alerts";
     }
 }
