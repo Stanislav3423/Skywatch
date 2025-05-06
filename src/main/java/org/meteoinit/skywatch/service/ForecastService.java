@@ -2,6 +2,7 @@ package org.meteoinit.skywatch.service;
 
 
 import org.meteoinit.skywatch.dto.ForecastDto;
+import org.meteoinit.skywatch.dto.ForecastUpdateDto;
 import org.meteoinit.skywatch.model.*;
 import org.meteoinit.skywatch.repository.*;
 
@@ -186,6 +187,7 @@ public class ForecastService {
 
     public ForecastDto mapDailyForecastToDto(DailyForecast forecast) {
         ForecastDto dto = new ForecastDto();
+        dto.setId(forecast.getId());
         dto.setDayOrHour(forecast.getDate().getWeekday());
         dto.setDate(forecast.getDate().getGmt().toLocalDate().toString());
         dto.setIcon(forecast.getCondition().getIcon());
@@ -203,6 +205,7 @@ public class ForecastService {
 
     public ForecastDto mapHourlyForecastToDto(HourlyForecast forecast) {
         ForecastDto dto = new ForecastDto();
+        dto.setId(forecast.getId());
         dto.setDayOrHour(String.format("%02d:00", forecast.getDate().getHour()));
         dto.setDate(forecast.getDate().getGmt().toLocalDate().toString());
         dto.setIcon(forecast.getCondition().getIcon());
@@ -215,5 +218,37 @@ public class ForecastService {
         dto.setPrecipitation_probability(forecast.getPrecipitationProbability() != null ? forecast.getPrecipitationProbability().floatValue() : 0);
         dto.setCondition(forecast.getCondition().getMain());
         return dto;
+    }
+
+    @Transactional
+    public void updateDailyForecast(ForecastUpdateDto dto) {
+        DailyForecast forecast = dailyRepo.findById(dto.getId())
+                .orElseThrow(() -> new RuntimeException("Daily forecast not found"));
+
+        forecast.setTemp(dto.getTemperature());
+        forecast.setPressure(dto.getPressure());
+        forecast.setPrecipitationAmount(dto.getPrecipitationAmount());
+        forecast.setPrecipitationProbability(dto.getPrecipitationProbability());
+        Wind wind = forecast.getWind();
+        wind.setSpeed(dto.getWindSpeed());
+        wind.setDeg(dto.getWindDeg());
+        windRepository.save(wind);
+        dailyRepo.save(forecast);
+    }
+
+    @Transactional
+    public void updateHourlyForecast(ForecastUpdateDto dto) {
+        HourlyForecast forecast = hourlyRepo.findById(dto.getId())
+                .orElseThrow(() -> new RuntimeException("Daily forecast not found"));
+
+        forecast.setTemp(dto.getTemperature());
+        forecast.setPressure(dto.getPressure());
+        forecast.setPrecipitationAmount(dto.getPrecipitationAmount());
+        forecast.setPrecipitationProbability(dto.getPrecipitationProbability());
+        Wind wind = forecast.getWind();
+        wind.setSpeed(dto.getWindSpeed());
+        wind.setDeg(dto.getWindDeg());
+        windRepository.save(wind);
+        hourlyRepo.save(forecast);
     }
 }

@@ -152,7 +152,6 @@ public class SecurityController {
         if (user != null && user.getRole().getRoleName().equals("GUEST")) {
             userRepository.delete(user);
         }
-        //userRepository.deleteUserByUsername(username);
 
         return ResponseEntity.ok("Guest deleted");
     }

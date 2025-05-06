@@ -4,6 +4,7 @@ import lombok.Data;
 
 @Data
 public class ForecastDto {
+    private Long id;
     private String dayOrHour;
     private String date;
     private String icon;
@@ -15,4 +16,6 @@ public class ForecastDto {
     private Float precipitation_amount;
     private Float precipitation_probability;
     private String condition;
+
+
 }

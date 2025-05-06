@@ -33,11 +33,11 @@
         </div>
 
         <nav class="nav-menu">
-            <a href="/index" class="nav-item active">
+            <a href="/dashboard" class="nav-item active">
                 <i data-lucide="home"></i>
                 <span>Dashboard</span>
             </a>
-            <a href="" class="nav-item">
+            <a href="/analytics" class="nav-item">
                 <i data-lucide="chart-column-increasing"></i>
                 <span>Analytics</span>
             </a>
@@ -45,13 +45,13 @@
                 <i data-lucide="cloud-alert"></i>
                 <span>Alerts</span>
             </a>
-            <a href="" class="nav-item">
-                <i data-lucide="notebook-pen"></i>
-                <span>Cases</span>
-            </a>
-            <a href="" class="nav-item">
+            <a href="/reports" class="nav-item">
                 <i data-lucide="clipboard-plus"></i>
                 <span>Reports</span>
+            </a>
+            <a href="/users" class="nav-item nav-users" style="display: none;">
+                <i data-lucide="users"></i>
+                <span>Users</span>
             </a>
             <a href="/settings" class="nav-item">
                 <i data-lucide="settings"></i>
@@ -120,8 +120,8 @@
                         <i data-lucide="wind"></i>
                     </div>
                     <div class="info-data">
-                        <p class="value">12 km/h</p>
-                        <p class="description">North-East</p>
+                        <p class="value"></p>
+                        <p class="description"></p>
                     </div>
                 </div>
             </div>
@@ -133,8 +133,8 @@
                         <i data-lucide="droplet"></i>
                     </div>
                     <div class="info-data">
-                        <p class="value">68%</p>
-                        <p class="description">Moderate</p>
+                        <p class="value"></p>
+                        <p class="description"></p>
                     </div>
                 </div>
             </div>
@@ -146,8 +146,8 @@
                         <i data-lucide="gauge"></i>
                     </div>
                     <div class="info-data">
-                        <p class="value">1015 hPa</p>
-                        <p class="description">Normal</p>
+                        <p class="value"></p>
+                        <p class="description"></p>
                     </div>
                 </div>
             </div>
@@ -218,8 +218,63 @@
                 <span class="data-value"><span id="modalPrecipProb"></span><span class="data-unit">%</span></span>
             </div>
         </div>
+        <div class="edit-modal-footer">
+            <button id="editForecastBtn" class="edit-btn edit-btn-primary" style="display: none;">Edit Forecast</button>
+        </div>
     </div>
 </div>
+
+<!-- Forecast Edit Modal -->
+<div id="forecastEditModal" class="edit-modal">
+    <div class="edit-modal-content">
+        <button class="edit-close-icon" onclick="closeForecastEditModal()">
+            <i data-lucide="x"></i>
+        </button>
+        <h3>Edit Forecast</h3>
+        <form id="forecastEditForm" onsubmit="handleForecastEditSubmit(event)">
+            <div class="form-group">
+                <label for="edit_date">Date</label>
+                <input type="text" id="edit_date" class="form-control" disabled>
+            </div>
+
+            <div class="form-group">
+                <label for="edit_temperature">Temperature</label>
+                <input type="text" id="edit_temperature" class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label for="edit_pressure">Pressure</label>
+                <input type="text" id="edit_pressure" class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label for="edit_wind_dir">Wind Direction</label>
+                <input type="text" id="edit_wind_dir" class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label for="edit_wind_speed">Wind Speed</label>
+                <input type="text" id="edit_wind_speed" class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label for="edit_precipitation_amount">Precipitation</label>
+                <input type="text" id="edit_precipitation_amount" class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label for="edit_precipitation_probability">Precip. Probability</label>
+                <input type="text" id="edit_precipitation_probability" class="form-control">
+            </div>
+
+            <div class="edit-modal-footer">
+                <button type="button" class="edit-btn edit-btn-secondary" onclick="closeForecastEditModal()">Cancel</button>
+                <button type="submit" class="edit-btn edit-btn-primary">Save Changes</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <script>
     lucide.createIcons();
 

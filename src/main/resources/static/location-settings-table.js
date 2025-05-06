@@ -6,7 +6,6 @@ if (username) {
     loadUserTriggers(username);
     account_det = document.getElementById("acc-details-p")
     account_det.innerHTML = `<p>Username: ${username}</p>`;
-
 } else {
     console.warn('No username found in token');
 }

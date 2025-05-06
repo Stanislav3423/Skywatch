@@ -12,7 +12,6 @@ public class Condition {
 
     @Id
     private Long id;
-
     private String main;
     private String description;
     private String icon;

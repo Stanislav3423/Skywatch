@@ -3,7 +3,6 @@ package org.meteoinit.skywatch.controller;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 import java.security.Principal;
 
@@ -31,7 +30,7 @@ public class MainController {
 
    @GetMapping("/")
     public String showLoginPage() {
-        return "index";
+        return "dashboard";
     }
 
     @GetMapping("/signin")
@@ -44,9 +43,9 @@ public class MainController {
         return "signup"; // signup.html
     }
 
-    @GetMapping("/index")
-    public String index() {
-        return "index"; // index.html (твоя головна сторінка)
+    @GetMapping("/dashboard")
+    public String dashboard() {
+        return "dashboard"; // dashboard.html (твоя головна сторінка)
     }
 
     @GetMapping("/settings")
@@ -57,5 +56,20 @@ public class MainController {
     @GetMapping("/alerts")
     public String alerts() {
         return "alerts";
+    }
+
+    @GetMapping("/analytics")
+    public String analytics() {
+        return "analytics";
+    }
+
+    @GetMapping("/reports")
+    public String reports() {
+        return "reports";
+    }
+
+    @GetMapping("/users")
+    public String users() {
+        return "users";
     }
 }

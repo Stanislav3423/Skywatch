@@ -1,5 +1,8 @@
 let currentWeatherData = null;
 let currentLocationId = null;
+let currentTypeOfForecast = null;
+//let url_parametr = "/standart";
+let url_parametr = "";
 
 document.addEventListener("DOMContentLoaded", () => {
     const username = loadUsernameFromTokenTable();
@@ -169,7 +172,7 @@ function loadUsernameFromTokenTable() {
 }
 
 function changeLocation(selectedValue) {
-    window.location.href = `index?location=${encodeURIComponent(selectedValue)}`;
+    window.location.href = `dashboard?location=${encodeURIComponent(selectedValue)}`;
 }
 
 const btn7day = document.getElementById('btn-7day');
@@ -178,7 +181,8 @@ const forecastContainer = document.getElementById('forecast-container');
 
 
 async function loadForecast(type, locationId) {
-    let url = `/dashboard/forecast/${type}/${locationId}`;
+    currentTypeOfForecast = type;
+    let url = `/dashboard/forecast/${type}${url_parametr}/${locationId}`;
     const response = await fetch(url);
     const data = await response.json();
 
@@ -193,6 +197,8 @@ async function loadForecast(type, locationId) {
     data.forEach(item => {
         html += `
         <div class="forecast-item" 
+            data-id="${item.id}"
+            data-type="${type}"
             data-day="${item.dayOrHour}"
             data-date="${item.date}"
             data-icon="${item.icon}"
@@ -304,6 +310,8 @@ async function loadForecast(type, locationId) {
 
     forecastContainer.querySelectorAll('.forecast-item').forEach(itemEl => {
         itemEl.addEventListener('click', () => {
+            const id = itemEl.dataset.id;
+            const type = itemEl.dataset.type;
             const day = itemEl.dataset.day;
             const date = itemEl.dataset.date;
             const icon = itemEl.dataset.icon;
@@ -314,6 +322,16 @@ async function loadForecast(type, locationId) {
             const precipAmount = itemEl.dataset['precipitationAmount'];
             const precipProb = itemEl.dataset['precipitationProbability'];
             const condition = itemEl.dataset.condition;
+
+            document.getElementById('editForecastBtn').dataset.id = id;
+            document.getElementById('editForecastBtn').dataset.date = date;
+            document.getElementById('editForecastBtn').dataset.temperature = temperature;
+            document.getElementById('editForecastBtn').dataset.condition = condition;
+            document.getElementById('editForecastBtn').dataset.pressure = pressure;
+            document.getElementById('editForecastBtn').dataset.windDir = windDir;
+            document.getElementById('editForecastBtn').dataset.windSpeed = windSpeed;
+            document.getElementById('editForecastBtn').dataset.precipAmount = precipAmount;
+            document.getElementById('editForecastBtn').dataset.precipProb = precipProb;
 
             // Заповнюємо модальне вікно
             document.getElementById('modalTitle').textContent = `${day} (${date})`;
@@ -326,6 +344,10 @@ async function loadForecast(type, locationId) {
             document.getElementById('modalWindSpeed').textContent = windSpeed;
             document.getElementById('modalPrecipAmount').textContent = precipAmount;
             document.getElementById('modalPrecipProb').textContent = precipProb;
+
+            const editBtn = document.getElementById('editForecastBtn');
+            editBtn.dataset.id = id;
+            editBtn.dataset.type = type;
 
             // Показати модальне вікно (оновлений спосіб)
             const modal = document.getElementById('forecastModal');
@@ -351,16 +373,7 @@ btn12hour.addEventListener('click', () => {
         loadForecast('12hour', currentLocationId);
     }
 });
-/*
-document.getElementById('closeModal').addEventListener('click', () => {
-    document.getElementById('forecastModal').style.display = 'none';
-});
 
-window.addEventListener('click', (event) => {
-    if (event.target === document.getElementById('forecastModal')) {
-        document.getElementById('forecastModal').style.display = 'none';
-    }
-});*/
 // Оновлена логіка закриття
 document.getElementById('closeModal').addEventListener('click', () => {
     const modal = document.getElementById('forecastModal');
@@ -379,3 +392,156 @@ window.addEventListener('click', (event) => {
         }, 300);
     }
 });
+
+checkAuthentication()
+
+let editingForecastId = null;
+document.getElementById("editForecastBtn").addEventListener("click", (e) => {
+    const btn = e.currentTarget;
+    const forecastId = btn.dataset.id;
+    const date = btn.dataset.date;
+    const temperature = btn.dataset.temperature;
+    const pressure = btn.dataset.pressure;
+    const windDir = btn.dataset.windDir;
+    const windSpeed = btn.dataset.windSpeed;
+    const precipAmount = btn.dataset.precipAmount;
+    const precipProb = btn.dataset.precipProb;
+
+    console.log('Редагуємо прогноз з ID:', forecastId);
+
+    openEditModal(forecastId, date, temperature, pressure, windDir, windSpeed, precipAmount, precipProb);
+});
+
+function openEditModal(forecastId, date, temperature, pressure, windDir, windSpeed, precipAmount, precipProb) {
+    editingForecastId = forecastId;
+    document.querySelectorAll('.form-control').forEach(input => {
+        input.style.borderColor = '#e2e8f0';
+    });
+    document.getElementById('edit_date').value = date;
+    document.getElementById('edit_temperature').value = temperature;
+    document.getElementById('edit_pressure').value = pressure;
+    document.getElementById('edit_wind_dir').value = windDir;
+    document.getElementById('edit_wind_speed').value = windSpeed;
+    document.getElementById('edit_precipitation_amount').value = precipAmount;
+    document.getElementById('edit_precipitation_probability').value = precipProb;
+    document.getElementById('forecastEditModal').classList.add('active');
+}
+
+async function handleForecastEditSubmit(event) {
+    event.preventDefault();
+
+    // Отримуємо значення з форми
+    const tempValue = document.getElementById('edit_temperature').value;
+    const pressureValue = document.getElementById('edit_pressure').value;
+    const windDirValue = document.getElementById('edit_wind_dir').value;
+    const windSpeedValue = document.getElementById('edit_wind_speed').value;
+    const precipAmountValue = document.getElementById('edit_precipitation_amount').value;
+    const precipProbValue = document.getElementById('edit_precipitation_probability').value;
+
+    // Валідація значень
+    try {
+        // Температура (-50 до +50 °C)
+        if (isNaN(tempValue)) throw new Error('Temperature must be a number');
+        const temperature = parseFloat(tempValue);
+        if (temperature < -50 || temperature > 50) {
+            throw new Error('Temperature must be between -50 and +50 °C');
+        }
+
+        // Тиск (800 до 1100 hPa)
+        if (isNaN(pressureValue)) throw new Error('Pressure must be a number');
+        const pressure = parseInt(pressureValue);
+        if (pressure < 800 || pressure > 1100) {
+            throw new Error('Pressure must be between 800 and 1100 hPa');
+        }
+
+        // Напрямок вітру (0-360 градусів)
+        if (isNaN(windDirValue)) throw new Error('Wind direction must be a number');
+        const windDeg = parseInt(windDirValue);
+        if (windDeg < 0 || windDeg > 360) {
+            throw new Error('Wind direction must be between 0 and 360 degrees');
+        }
+
+        // Швидкість вітру (0-100 m/s)
+        if (isNaN(windSpeedValue)) throw new Error('Wind speed must be a number');
+        const windSpeed = parseFloat(windSpeedValue);
+        if (windSpeed < 0 || windSpeed > 100) {
+            throw new Error('Wind speed must be between 0 and 100 m/s');
+        }
+
+        // Кількість опадів (0-500 mm)
+        if (isNaN(precipAmountValue)) throw new Error('Precipitation must be a number');
+        const precipitationAmount = parseFloat(precipAmountValue);
+        if (precipitationAmount < 0 || precipitationAmount > 500) {
+            throw new Error('Precipitation must be between 0 and 500 mm');
+        }
+
+        // Ймовірність опадів (0-100%)
+        if (isNaN(precipProbValue)) throw new Error('Precipitation probability must be a number');
+        const precipitationProbability = parseFloat(precipProbValue);
+        if (precipitationProbability < 0 || precipitationProbability > 100) {
+            throw new Error('Precipitation probability must be between 0 and 100%');
+        }
+
+        // Якщо валідація пройдена - формуємо об'єкт для відправки
+        const forecastData = {
+            id: editingForecastId,
+            forecastType: document.getElementById("editForecastBtn").dataset.type,
+            temperature,
+            pressure,
+            windDeg,
+            windSpeed,
+            precipitationAmount,
+            precipitationProbability
+        };
+
+        const response = await fetch('dashboard/forecast/update', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('jwt')}`
+            },
+            body: JSON.stringify(forecastData)
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Failed to update forecast');
+        }
+
+        closeForecastEditModal();
+        loadForecast(currentTypeOfForecast, currentLocationId);
+        alert('Forecast updated successfully');
+
+    } catch (error) {
+        console.error('Validation error:', error);
+        alert('Validation error: ' + error.message);
+        // Підсвічуємо поле з помилкою
+        highlightErrorField(error.message);
+    }
+}
+
+// Функція для підсвічування поля з помилкою
+function highlightErrorField(errorMessage) {
+    document.querySelectorAll('.form-control').forEach(input => {
+        input.style.borderColor = '#e2e8f0';
+    });
+
+    // Визначаємо, яке поле має помилку
+    if (errorMessage.includes('Temperature')) {
+        document.getElementById('edit_temperature').style.borderColor = 'red';
+    } else if (errorMessage.includes('Pressure')) {
+        document.getElementById('edit_pressure').style.borderColor = 'red';
+    } else if (errorMessage.includes('Wind direction')) {
+        document.getElementById('edit_wind_dir').style.borderColor = 'red';
+    } else if (errorMessage.includes('Wind speed')) {
+        document.getElementById('edit_wind_speed').style.borderColor = 'red';
+    } else if (errorMessage.includes('Precipitation must be')) {
+        document.getElementById('edit_precipitation_amount').style.borderColor = 'red';
+    } else if (errorMessage.includes('Precipitation probability')) {
+        document.getElementById('edit_precipitation_probability').style.borderColor = 'red';
+    }
+}
+
+function closeForecastEditModal() {
+    document.getElementById('forecastEditModal').classList.remove('active');
+}

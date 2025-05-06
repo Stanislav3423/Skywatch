@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Skywatch</title>
     <link rel="stylesheet" href="/styles.css">
-    <link rel="stylesheet" href="/alerts.css">
+    <link rel="stylesheet" href="/users.css">
     <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
@@ -41,7 +41,7 @@
                 <i data-lucide="chart-column-increasing"></i>
                 <span>Analytics</span>
             </a>
-            <a href="/alerts" class="nav-item active">
+            <a href="/alerts" class="nav-item">
                 <i data-lucide="cloud-alert"></i>
                 <span>Alerts</span>
             </a>
@@ -49,7 +49,7 @@
                 <i data-lucide="clipboard-plus"></i>
                 <span>Reports</span>
             </a>
-            <a href="/users" class="nav-item nav-users" style="display: none;">
+            <a href="/users" class="nav-item nav-users active" style="display: none;">
                 <i data-lucide="users"></i>
                 <span>Users</span>
             </a>
@@ -69,34 +69,41 @@
     <!-- Main Content -->
     <main class="main-content">
         <header class="header">
-            <h1>Alerts</h1>
-            <p class="location">Forecasts that match trigger parameters</p>
+            <h1>Users</h1>
+            <p class="location">Display all service users</p>
         </header>
 
-        <!--<div class="settings-tabs">
-            <button class="tab-item active" id="dailyTab">7-Day Forecast</button>
-            <button class="tab-item" id="hourlyTab">12-Hour Forecast</button>
-        </div>-->
+        <!-- Settings Content -->
+        <div class="settings-container">
+            <!-- Tabs -->
+            <div class="settings-tabs">
+                <button class="tab-item active" data-tab="locations">User list</button>
+            </div>
 
-        <!-- Triggers container -->
-        <div id="triggersContainer">
-
-            <!--<div class="forecast trigger-forecast">
-                <h2>Trigger: Warm Weather</h2>
-                <p class="trigger-location">Location: Lviv</p>
-                <div class="settings-tabs">
-                    <button class="tab-item active">Daily</button>
-                    <button class="tab-item">Hourly</button>
+            <!-- Settings Tables -->
+            <div class="settings-tables">
+                <!-- Locations Table -->
+                <div class="settings-table tab-content active" id="users">
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>User Id</th>
+                            <th>Username</th>
+                            <th>Role</th>
+                            <th>Enable</th>
+                            <th>Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
                 </div>
-                <div class="forecast-grid daily-grid">…</div>
-                <div class="forecast-grid hourly-grid" style="display:none;">…</div>
-            </div>-->
 
-            <!-- More trigger-forecast -->
+            </div>
         </div>
     </main>
 </div>
-<!-- Модальне вікно -->
+
 <div id="locationModal" class="modal">
     <div class="modal-content">
         <span id="closeLocationModalBtn" class="close-modal">&times;</span>
@@ -106,10 +113,51 @@
             <button id="searchLocationBtn" class="modal-search-btn">Search</button>
         </div>
         <div class="modal-body" id="locationResults">
-            <!-- dynamically filled with search results -->
         </div>
     </div>
 </div>
+
+<!-- User Edit Modal -->
+<div id="userEditModal" class="modal">
+    <div class="modal-content">
+        <button class="close-icon" onclick="closeModal()">
+            <i data-lucide="x"></i>
+        </button>
+        <h3>Edit User</h3>
+        <form id="userEditForm" onsubmit="handleSubmit(event)">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" class="form-control" disabled>
+            </div>
+
+            <div class="form-group">
+                <label for="role">Role</label>
+                <select id="role" class="form-control select-control">
+                    <option value="USER">User</option>
+                    <option value="ADMIN">Admin</option>
+                    <option value="GUEST">Guest</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Status</label>
+                <div class="switch-wrapper">
+                    <label class="switch">
+                        <input type="checkbox" id="status">
+                        <span class="slider"></span>
+                    </label>
+                    <span id="statusText">Active</span>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <script>
     lucide.createIcons();
 
@@ -132,6 +180,6 @@
     toggleBtn.addEventListener('click', toggleSidebar);
 </script>
 <script src="/sidebar.js"></script>
-<script src="/alerts.js"></script>
+<script src="/users.js"></script>
 </body>
 </html>

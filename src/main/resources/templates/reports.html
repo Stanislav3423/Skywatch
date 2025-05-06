@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Skywatch</title>
     <link rel="stylesheet" href="/styles.css">
-    <link rel="stylesheet" href="/alerts.css">
+    <link rel="stylesheet" href="/reports.css">
     <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
@@ -41,11 +41,11 @@
                 <i data-lucide="chart-column-increasing"></i>
                 <span>Analytics</span>
             </a>
-            <a href="/alerts" class="nav-item active">
+            <a href="/alerts" class="nav-item">
                 <i data-lucide="cloud-alert"></i>
                 <span>Alerts</span>
             </a>
-            <a href="/reports" class="nav-item">
+            <a href="/reports" class="nav-item active">
                 <i data-lucide="clipboard-plus"></i>
                 <span>Reports</span>
             </a>
@@ -69,8 +69,8 @@
     <!-- Main Content -->
     <main class="main-content">
         <header class="header">
-            <h1>Alerts</h1>
-            <p class="location">Forecasts that match trigger parameters</p>
+            <h1>Reports</h1>
+            <p class="location">Detailed weather data reports</p>
         </header>
 
         <!--<div class="settings-tabs">
@@ -78,37 +78,16 @@
             <button class="tab-item" id="hourlyTab">12-Hour Forecast</button>
         </div>-->
 
-        <!-- Triggers container -->
-        <div id="triggersContainer">
+        <div class="reports-container">
+            <div class="reports-header">
+                <h2>Generated Reports</h2>
+            </div>
 
-            <!--<div class="forecast trigger-forecast">
-                <h2>Trigger: Warm Weather</h2>
-                <p class="trigger-location">Location: Lviv</p>
-                <div class="settings-tabs">
-                    <button class="tab-item active">Daily</button>
-                    <button class="tab-item">Hourly</button>
-                </div>
-                <div class="forecast-grid daily-grid">…</div>
-                <div class="forecast-grid hourly-grid" style="display:none;">…</div>
-            </div>-->
-
-            <!-- More trigger-forecast -->
+            <div id="reportsList">
+            </div>
         </div>
+
     </main>
-</div>
-<!-- Модальне вікно -->
-<div id="locationModal" class="modal">
-    <div class="modal-content">
-        <span id="closeLocationModalBtn" class="close-modal">&times;</span>
-        <div class="modal-header">
-            <h3 class="modal-title">Search Location</h3>
-            <input type="text" id="locationSearchInput" placeholder="Enter location name..." class="modal-input">
-            <button id="searchLocationBtn" class="modal-search-btn">Search</button>
-        </div>
-        <div class="modal-body" id="locationResults">
-            <!-- dynamically filled with search results -->
-        </div>
-    </div>
 </div>
 <script>
     lucide.createIcons();
@@ -132,6 +111,6 @@
     toggleBtn.addEventListener('click', toggleSidebar);
 </script>
 <script src="/sidebar.js"></script>
-<script src="/alerts.js"></script>
+<script src="/reports.js"></script>
 </body>
 </html>

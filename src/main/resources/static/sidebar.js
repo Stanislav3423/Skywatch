@@ -75,6 +75,17 @@ function checkAuthentication() {
             if (isGuestSession) {
                 sessionStorage.setItem('isGuest', 'true');
             }
+
+            if (role === 'ADMIN') {
+                const usersLink = document.querySelector('.nav-users');
+                if (usersLink) {
+                    usersLink.style.display = 'flex';
+                    const editForecastBtn = document.getElementById('editForecastBtn');
+                    if (editForecastBtn) {
+                        editForecastBtn.style.display = 'inline-block';
+                    }
+                }
+            }
         });
     }
 }

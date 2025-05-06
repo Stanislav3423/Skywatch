@@ -13,7 +13,7 @@ document.getElementById('signinForm').addEventListener('submit', async function 
     if (response.ok) {
         const token = await response.text();
         localStorage.setItem('jwt', token);
-        window.location.href = 'index';
+        window.location.href = 'dashboard';
         console.log(token)
     } else {
         alert('Invalid credentials!');
@@ -32,7 +32,7 @@ document.getElementById('guestLogin').addEventListener('click', async function(e
         if (response.ok) {
             const token = await response.text();
             localStorage.setItem('jwt', token);
-            window.location.href = 'index';
+            window.location.href = 'dashboard';
         } else {
             alert('Failed to login as guest.');
         }

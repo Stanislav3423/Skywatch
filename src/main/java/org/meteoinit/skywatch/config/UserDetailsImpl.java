@@ -14,25 +14,26 @@ public class UserDetailsImpl implements UserDetails {
     private String username;
     private String password;
     private String role;
-    //private boolean enabled;
+    private boolean enabled;
 
     public static UserDetailsImpl build(User user) {
         return new UserDetailsImpl(
                 user.getUsername(),
                 user.getPassword(),
-                user.getRole().getRoleName());
+                user.getRole().getRoleName(),
+                user.getEnabled());
     }
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + role));
     }
 
-    public UserDetailsImpl(String username, String password, String roleName) {
+    public UserDetailsImpl(String username, String password, String roleName, boolean enabled) {
         //this.id = id;
         this.username = username;
         this.password = password;
         this.role = roleName;
-        //this.enabled = enabled;
+        this.enabled = enabled;
     }
 
     public void setUsername(String username) {
@@ -78,11 +79,10 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        //return enabled;
-        return true;
+        return enabled;
     }
 
     public void setEnabled(boolean enabled) {
-        //this.enabled = enabled;
+        this.enabled = enabled;
     }
 }
