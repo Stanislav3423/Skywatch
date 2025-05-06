@@ -86,6 +86,20 @@ function checkAuthentication() {
                     }
                 }
             }
+            else if (role === 'GUEST') {
+                const reportsLink = document.querySelector('.nav-reports');
+                if (reportsLink) {
+                    reportsLink.style.display = 'none';
+                }
+                const analyticsLink = document.querySelector('.nav-analytics');
+                if (analyticsLink) {
+                    analyticsLink.style.display = 'none';
+                }
+                const triggersLink = document.querySelector('.nav-alerts');
+                if (triggersLink) {
+                    triggersLink.style.display = 'none';
+                }
+            }
         });
     }
 }
