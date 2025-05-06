@@ -28,19 +28,6 @@ public class TriggerController {
     private final TriggerService triggerService;
     private final ForecastService forecastService;
 
-
-    /*@GetMapping("/{triggerId}/daily-forecasts")
-    public ResponseEntity<List<DailyForecast>> getMatchingDailyForecasts(@PathVariable Long triggerId) {
-        List<DailyForecast> forecasts = triggerService.getMatchingDailyForecasts(triggerId);
-        return ResponseEntity.ok(forecasts);
-    }
-
-    @GetMapping("/{triggerId}/hourly-forecasts")
-    public ResponseEntity<List<HourlyForecast>> getMatchingHourlyForecasts(@PathVariable Long triggerId) {
-        List<HourlyForecast> forecasts = triggerService.getMatchingHourlyForecasts(triggerId);
-        return ResponseEntity.ok(forecasts);
-    }*/
-
     @GetMapping("/{triggerId}/daily-forecasts")
     public ResponseEntity<List<ForecastDto>> getMatchingDailyForecasts(@PathVariable Long triggerId) {
         List<DailyForecast> forecasts = triggerService.getMatchingDailyForecasts(triggerId);

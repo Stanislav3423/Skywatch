@@ -85,7 +85,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="day">${dayStr}</div>
                 <div class="date">${dateStr}</div>
             </div>
-            <!--<div class="forecast-icon">☀️</div>-->
             <img src="https://openweathermap.org/img/wn/${forecast.icon}@2x.png" alt="${forecast.condition}" class="forecast-icon" />
             <div class="condition">${forecast.condition || ''}</div>
             <div class="detail-item">

@@ -18,16 +18,6 @@ public class MainController {
         return principal.getName();
     }
 
-    /*@GetMapping("/")
-    public String home(HttpServletRequest request) {
-        // Перевіряємо наявність валідного JWT
-        String token = extractToken(request);
-        if (token != null && jwtCore.validateToken(token)) {
-            return "index";
-        }
-        return "redirect:/signin";
-    }*/
-
    @GetMapping("/")
     public String showLoginPage() {
         return "dashboard";

@@ -23,20 +23,6 @@ public class TriggerService {
     private final UserRepository userRepository;
     private final LocationRepository locationRepository;
 
-    /*public List<DailyForecast> getMatchingDailyForecasts(Long triggerId) {
-        Trigger trigger = triggerRepository.findById(triggerId)
-                .orElseThrow(() -> new RuntimeException("Trigger not found"));
-
-        String parameter = String.valueOf(trigger.getParameter()).toLowerCase();
-        String operator = trigger.getOperator().getSymbol();
-        System.out.println(operator);
-        System.out.println(parameter);
-        double value = trigger.getValue();
-        Long locationId = trigger.getLocation().getId();
-
-        return dailyForecastRepository.findAllByTriggerCondition(parameter, operator, value, locationId);
-    }*/
-
     public List<DailyForecast> getMatchingDailyForecasts(Long triggerId) {
         Trigger trigger = triggerRepository.findById(triggerId)
                 .orElseThrow(() -> new RuntimeException("Trigger not found"));
